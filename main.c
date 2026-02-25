@@ -30,6 +30,8 @@ int main()
 {
     stdio_init_all();
 
+    //#ifdef RASPBERRYPI_PICO2
+
     // SPI initialisation. This example will use SPI at 20MHz.
     spi_init(SPI_PORT, 20*1000*1000);
     spi_set_format(SPI_PORT, 16, 0, 0, SPI_MSB_FIRST);
@@ -39,14 +41,17 @@ int main()
     gpio_set_function(PIN_SCK, GPIO_FUNC_SPI);
     gpio_set_function(PIN_MOSI, GPIO_FUNC_SPI);
 
+    uint16_t value = 0;
+
     while (true)
     {
         // the analog output should be about 3.3 * value / 4096
-        uint16_t value = 2048;
         uint16_t full_command = DAC_COMMAND | (value & 0xfff);
         spi_write16_blocking(SPI_PORT, &full_command, 1);
 
         printf("Sent %u %u\n", value, full_command);
-        sleep_ms(1000);
+        sleep_ms(100);
+
+        value++;
     }
 }
